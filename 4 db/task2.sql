@@ -6,7 +6,7 @@ WITH RECURSIVE Subordinates AS (
         DepartmentID,
         RoleID
     FROM Employees
-    WHERE ManagerID = 1  -- Начало с непосредственных подчиненных Ивана
+    WHERE ManagerID = 1
     
     UNION ALL
     
@@ -18,7 +18,7 @@ WITH RECURSIVE Subordinates AS (
         e.RoleID
     FROM Employees e
     INNER JOIN Subordinates s 
-        ON e.ManagerID = s.EmployeeID  -- Рекурсивное добавление подчиненных
+        ON e.ManagerID = s.EmployeeID
 )
 SELECT
     s.EmployeeID,
@@ -31,13 +31,13 @@ SELECT
          FROM Projects p 
          WHERE p.DepartmentID = s.DepartmentID),
         'NULL'
-    ) AS ProjectNames,                                       -- NULL → 'NULL'
+    ) AS ProjectNames,                                     
     COALESCE(
         (SELECT STRING_AGG(t.TaskName, ', ') 
          FROM Tasks t 
          WHERE t.AssignedTo = s.EmployeeID),
         'NULL'
-    ) AS TaskNames,                                         -- NULL → 'NULL'
+    ) AS TaskNames,                                       
     (SELECT COUNT(*) 
      FROM Tasks t 
      WHERE t.AssignedTo = s.EmployeeID) AS TotalTasks,
